@@ -1,0 +1,62 @@
+{
+  "name": "twitter-fav-downloader",
+  "productName": "twitter-fav-downloader",
+  "version": "1.0.0",
+  "description": "Downloads Personal Twitter Favorites Media",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [],
+  "author": {
+    "name": "Mohannad Otaibi",
+    "email": "mohannad.otaibi@gmail.com"
+  },
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "twitter_fav_downloader"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "colors": "^1.4.0",
+    "electron-dl": "^3.0.0",
+    "electron-node-config": "^1.1.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "twitter-lite": "^0.13.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.51",
+    "@electron-forge/maker-deb": "^6.0.0-beta.51",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.51",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.51",
+    "@electron-forge/maker-zip": "^6.0.0-beta.51",
+    "electron": "9.0.2"
+  }
+}

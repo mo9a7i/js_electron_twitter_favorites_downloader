@@ -1,0 +1,12 @@
+{
+  "files": {
+    "downloadLocation": "downloads/"
+  },
+  "twitter": {
+    "consumer_key": "", // from Twitter.
+    "consumer_secret": "", // from Twitter.
+    "access_token_key": "", // from your User (oauth_token)
+    "access_token_secret": "" // from your User (oauth_token_secret)
+  },
+  "targetAccount": ""
+}
