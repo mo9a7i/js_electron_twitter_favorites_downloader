@@ -20,7 +20,7 @@ const client = new Twitter({
   consumer_key: config.twitter.consumer_key, // from Twitter.
   consumer_secret: config.twitter.consumer_secret, // from Twitter.
   access_token_key: config.twitter.access_token_key, // from your User (oauth_token)
-  access_token_secret: config.twitter.access_token_secret // from your User (oauth_token_secret)
+  access_token_secret: config.twitter.access_token_secret // from your User (oauth_token_secret) 
 });
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
