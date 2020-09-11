@@ -47,6 +47,8 @@ const createWindow = () => {
 var ipc = require('electron').ipcMain;
 var unlike_count = 1;
 var processing_count = 1;
+var delete_array = new Array();
+
 
 ipc.on('invokeAction', function(event, data){
 
@@ -111,7 +113,7 @@ const lets_twitter = (last_id) => {
   });
 }
 
-function process_tweet(element){
+async function process_tweet(element){
   last_tweet_id = element.id_str;
   //if the tweet has extended_entities, meaning, images or videos, go inside.
   console.log(("https://twitter.com/"+element.user.screen_name+"/status/"+element.id_str).bgWhite.cyan)
@@ -143,6 +145,7 @@ function process_tweet(element){
 
     console.log("seems to be a personal retweet, deal with it later".bgRed.white);
     console.log(JSON.stringify(element, null, 4));
+
     element.entities.urls.forEach(eurl =>{
       var our_url = eurl.expanded_url;
       if(our_url.startsWith("https://twitter.com/i/web/status")){
@@ -168,7 +171,7 @@ function process_tweet(element){
   }
 }
 
-function download_video(entity,element){
+async function download_video(entity,element){
   // loop through variants
   var video_url = '';
   var bitrate = '0';
@@ -196,10 +199,10 @@ function download_video(entity,element){
     response.pipe(file);
   });
 
-  destroy_favorite(element.id_str);
+  await destroy_favorite(element.id_str);
 }
 
-function download_photo(entity,element){
+async function download_photo(entity,element){
   // loop through variants
   var photo_url = entity.media_url;
   const file_url = photo_url.replace("https","http");
@@ -214,7 +217,7 @@ function download_photo(entity,element){
     response.pipe(file);
   });
 
-  destroy_favorite(element.id_str);
+  await destroy_favorite(element.id_str);
 }
 
 async function destroy_favorite(id){
@@ -224,7 +227,7 @@ console.log((unlike_count + ": deleteing " + id+", ").bgRed.white);
     id: id
   };
 
-  client.post("favorites/destroy" , parameters).then(results => {
+  await client.post("favorites/destroy" , parameters).then(results => {
     console.log((unlike_count + ": Successfully unliked " + id).cyan);
   })
   .catch(console.error);
