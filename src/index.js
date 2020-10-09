@@ -68,7 +68,7 @@ ipc.on('invokeAction', function(event, data){
 const lets_twitter = (last_id) => {
   return new Promise((resolve, reject) => {
 
-    const favorites_count = client.get("users/show", {screen_name:"mlgoofbasha"}).then(result =>{
+    const favorites_count = client.get("users/show", {screen_name:config.twitter.targetAccount}).then(result =>{
       console.log(("# of likes: " + result.favourites_count).blue.underline.bgWhite);
     }).catch(err => reject(err))
 
