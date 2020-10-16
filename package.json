@@ -45,6 +45,7 @@
     }
   },
   "dependencies": {
+    "big-integer": "^1.6.48",
     "colors": "^1.4.0",
     "electron-dl": "^3.0.0",
     "electron-node-config": "^1.1.0",
