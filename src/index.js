@@ -35,15 +35,20 @@ const createWindow = () => {
 var ipc = require('electron').ipcMain;
 
 ipc.on('invokeAction', (event, data) => {
-	
-	
-	myTwitter.lets_twitter(data.last_tweet_id).then(result => {
-			console.log('finished twittering');
-			event.sender.send('actionReply', result);
-		}).catch(err => {
-			console.log(err);
-		});
+	try{
+		makeTheCall(data.last_tweet_id, event)
+		
+	}catch(err){
+		console.log(err);
+	}
 });
+
+async function makeTheCall(last_id, event){
+	
+	const last_tweet_id = await myTwitter.lets_twitter(last_id);
+	console.log('finished twittering');
+	event.sender.send('actionReply', last_tweet_id);
+}
 
 app.on('ready', createWindow);
 
