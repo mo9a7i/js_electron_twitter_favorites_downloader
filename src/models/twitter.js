@@ -41,12 +41,13 @@ async function lets_twitter(last_id) {
 			// I think wait for it to download before unliking it is better to avoid deleting before download finishes
 			// even though it doesn't matter, but can avoid 
 			try{
-				console.log('processing tweet');
+				process.stdout.write('processing tweet, ');
 				const nothing = await process_tweet(favorite, processing_count);
 				if(nothing == 'success'){
-					console.log('destroying favorite');
+					console.log('destroying favorite'.red);
 					const what = await destroy_favorite(favorite.id_str, processing_count);
 				}
+				console.log('-------------------------');
 			}catch(error){
 				console.log('could not process tweet ' + favorite.id_str + ', moving to next');
 				continue;
@@ -91,9 +92,10 @@ async function get_favorites(last_id) {
 		//trim_user: true,
 	};
 
-	console.log('passed last id to get_favorites is: ' + last_id)
+	
 
 	if (typeof last_id != 'undefined') {
+		console.log('passed last id to get_favorites is: ' + last_id)
 		if (last_id != 0) {
 			parameters.max_id = bigInt(last_id).minus(1).toString();
 			console.log('Getting tweets before: '+ parameters.max_id);
@@ -117,7 +119,7 @@ async function get_favorites(last_id) {
 }
 
 async function destroy_favorite(id, processing_count) {
-	console.log(processing_count + ': ' + (unlike_count + ": deleteing " + id + ", ").bgRed.white);
+	console.log((processing_count + ': deleteing ' + id).red);
 	const parameters = {
 		id: id,
 		include_entities: false,
@@ -127,34 +129,34 @@ async function destroy_favorite(id, processing_count) {
 		await client.post("favorites/destroy", parameters)
 		console.log((unlike_count + ": Successfully unliked " + id).cyan);
 	}catch(error){
-		console.error("failed destroying the like");
+		console.error("failed destroying the like".bgRed.white);
 	}
 
 	unlike_count += 1;
 }
 
 async function process_tweet(element, processing_count) {
-	console.log(("https://twitter.com/" + element.user.screen_name + "/status/" + element.id_str).bgWhite.cyan)
+	console.log(("https://twitter.com/" + element.user.screen_name + "/status/" + element.id_str).blue.underline)
 	
 	//if the tweet has extended_entities, meaning, images or videos, go inside.
 	if (typeof element.extended_entities !== 'undefined') {
 		// loop through media of extended entity
-		console.log("It's a media, working on the download");
+		console.log("It's a media,".green);
 		for(const entity of element.extended_entities.media){
 			if (entity.type == "video") {
-				console.log("it is a video..");
+				console.log("it is a video..".green);
 				await download_video(entity, element);
 			} 
 			else if (entity.type == "photo") {
-				console.log("it is a photo..");
+				console.log("it is a photo..".green);
 				await download_photo(entity, element);
 			} 
 			else if (entity.type == "animated+gif") {
-				console.log("it is a an animated GIF..");
+				console.log("it is a an animated GIF..".green);
 				await download_video(entity, element);
 			} 
 			else {
-				console.log("it is a " + entity.type);
+				console.log(("it is a " + entity.type).bgRed.white);
 				console.log(JSON.stringify(element, null, 4));
 			}	
 		}
@@ -197,7 +199,7 @@ async function download_video(entity, element) {
 		// loop through variants
 		var video_url = '';
 		var bitrate = '0';
-
+		console.log('working on the download'.green)
 		// Pick the best bitrate
 		entity.video_info.variants.forEach((variant) => {
 			if (typeof variant.bitrate !== undefined) {
@@ -223,9 +225,11 @@ async function download_video(entity, element) {
 		http.get(file_url, response => {
 			try{
 				response.pipe(file);
+				console.log('Done Downloading'.green)
 				resolve('file written successfully');
 			}
 			catch(error){
+				console.log('Failed'.bgRed.white)
 				reject('file writing error');
 			}
 		});
@@ -234,6 +238,7 @@ async function download_video(entity, element) {
 
 async function download_photo(entity, element) {
 	return new Promise((resolve, reject) => {
+		console.log('working on the download'.green)
 		var photo_url = entity.media_url;
 		const file_url = photo_url.replace("https", "http");
 		const dirName = config.files.downloadLocation + element.user.screen_name + '/';
@@ -248,9 +253,11 @@ async function download_photo(entity, element) {
 		http.get(file_url, response => {
 			try{
 				response.pipe(file);
+				console.log('Done Downloading'.green)
 				resolve('file written successfully');
 			}
 			catch(error){
+				console.log('Failed'.bgRed.white)
 				reject('file writing error');
 			}
 		});
