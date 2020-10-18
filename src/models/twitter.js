@@ -70,6 +70,23 @@ async function lets_twitter(last_id) {
 	}
 }
 
+async function check_archive(tweet_id){
+	process.stdout.write('processing archived tweet, ');
+	try{
+		let tweet = await get_tweet(tweet_id);
+		
+		const nothing = await process_tweet(tweet, 1);
+
+		if(nothing == 'success'){
+			console.log('destroying favorite'.red);
+			const what = await destroy_favorite(tweet.id_str, processing_count);
+		}
+		console.log('-------------------------');
+	}catch(error){
+		console.log('could not process tweet ' + tweet.id_str + ', moving to next');
+	}
+}
+
 async function get_favorites_count(){
 	return new Promise((resolve, reject) =>{
 		client.get("users/show", {
@@ -118,6 +135,26 @@ async function get_favorites(last_id) {
 	}
 }
 
+async function get_tweet(tweet_id) {
+	const parameters = {
+		id: tweet_id,
+		include_entities: true,
+		include_ext_alt_text: true,
+		tweet_mode: "extended",
+	};
+
+	try {
+		const tweet = await client.get("statuses/show", parameters);
+
+		return tweet;
+	} catch (error) {
+		console.log(error.errors);
+		destroy_favorite(tweet_id,1);
+		return;
+	}
+	
+}
+
 async function destroy_favorite(id, processing_count) {
 	console.log((processing_count + ': deleteing ' + id).red);
 	const parameters = {
@@ -130,6 +167,7 @@ async function destroy_favorite(id, processing_count) {
 		console.log((unlike_count + ": Successfully unliked " + id).cyan);
 	}catch(error){
 		console.error("failed destroying the like".bgRed.white);
+		console.log(error.errors);
 	}
 
 	unlike_count += 1;
