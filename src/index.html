@@ -24,33 +24,46 @@
 
       <div class="footer">
         <small>Made with no 💖 by <a href="https://www.twitter.com/bufaihan">@BuFaihan</a></small>
+        <br>
+        <small>Items saved at <a id="savePath" href=""></a></small>
       </div>
     </div>
     <script type="text/javascript">
-      var ipc = require('electron').ipcRenderer;
-      var download_btn = document.getElementById('download');
-      var text_result = document.getElementById('result_text');
-
-      let args = {};
-      args.message = "Starting the button work";
-
-      download_btn.addEventListener('click', () =>{
-          download_btn.disabled = true;
-
-          ipc.once('actionReply', (event, response) =>{
-            text_result.innerHTML = response;
-            download_btn.disabled = false;
-            console.log("Return: "+ response);
-          })
+      
+        //Browse Link
+        var downloadPath = require('electron').remote.app.getAppPath() + "/downloads";
+        var browseLink = document.getElementById("savePath")
+        browseLink.text = downloadPath;
+      
+        browseLink.addEventListener('click', () =>{
+            const {shell} = require('electron') // deconstructing assignment
+            shell.openPath(downloadPath) // Open the given file in the desktop's default manner.
+        });
 
 
-          if(/^\d+$/.test(text_result.innerHTML)){
-            args.last_tweet_id = text_result.innerHTML;
-          }
-            text_result.innerHTML = "Working ...";
-            ipc.send('invokeAction', args);
-      });
+        // Download Button Actions
+        var ipc = require('electron').ipcRenderer;
+        var download_btn = document.getElementById('download');
+        var text_result = document.getElementById('result_text');
+        let args = {};
+        args.message = "Starting the button work";
+        
+        download_btn.addEventListener('click', () =>{
+            download_btn.disabled = true;
+
+            ipc.once('actionReply', (event, response) =>{
+                text_result.innerHTML = response;
+                download_btn.disabled = false;
+                console.log("Return: "+ response);
+            })
+
+            if(/^\d+$/.test(text_result.innerHTML)){
+                args.last_tweet_id = text_result.innerHTML;
+            }
+                text_result.innerHTML = "Working ...";
+                ipc.send('invokeAction', args);
+        });
 
     </script>
-      </body>
+</body>
 </html>

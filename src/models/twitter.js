@@ -30,7 +30,6 @@ async function lets_twitter(last_id) {
 		}
 
 		const favorites = await get_favorites(last_id);
-		//console.log('favorites are: ' + favorites);
 		console.log('We have got ' + favorites.length + ' for this cycle, now looping through');
 
 		for(const favorite of favorites){
