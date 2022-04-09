@@ -6,9 +6,14 @@ const {
 // To fully inspect elements
 const util = require('util');
 const path = require('path');
+let config = require('electron-node-config');
+
 
 // To style console output colors
 const colors = require('colors');
+const dirName = config.files.downloadLocation + '/';
+module.exports.downloadLink = () => dirName;
+
 
 const myTwitter = require('./models/twitter')
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
