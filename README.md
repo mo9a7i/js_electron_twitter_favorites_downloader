@@ -1,11 +1,12 @@
-# 🔴 DEPRECATED | [electronjs] Twitter Favorites (Likes) Downloader
-
-> ⚠️ This repo is deprecated. ⚠️  
-> “This is no longer supported, please consider using [Mo9a7i/js_twitter_likes_downloader](https://github.com/Mo9a7i/js_twitter_likes_downloader) instead.”
-
-
+# [electronjs] Twitter Favorites (Likes) Downloader
 A small electron js app that downloads favorites of given user, then unlike the tweet
 
+
+> ### ⚠️ This repo is deprecated [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)  
+> This is no longer supported, please consider using [Mo9a7i/js_twitter_likes_downloader](https://github.com/Mo9a7i/js_twitter_likes_downloader) instead.  
+  
+  
+  
 
 
 ### Features  To Be
