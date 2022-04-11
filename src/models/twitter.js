@@ -8,9 +8,13 @@ const fs = require('fs');
 var bigInt = require("big-integer");
 const { resolve } = require('path');
 
+
+// Not sure why, I should re-place this one.
 let unlike_count = 1;
 let processing_count = 1;
 
+
+// Make the twitter client
 const client = new Twitter({
 	subdomain: "api", // "api" is the default (change for other subdomains)
 	version: "1.1", // version "1.1" is the default (change for other subdomains)
@@ -20,6 +24,7 @@ const client = new Twitter({
 	access_token_secret: config.twitter.access_token_secret // from your User (oauth_token_secret)
 });
 
+// Starting point
 async function lets_twitter(last_id) {
 	try{
 		// Create a variable to hold the last tweet id, since we will resolve it
@@ -69,35 +74,7 @@ async function lets_twitter(last_id) {
 	}
 }
 
-async function check_archive(tweet_id){
-	process.stdout.write('processing archived tweet, ');
-	try{
-		let tweet = await get_tweet(tweet_id);
-		
-		const nothing = await process_tweet(tweet, 1);
-
-		if(nothing == 'success'){
-			console.log('destroying favorite'.red);
-			const what = await destroy_favorite(tweet.id_str, processing_count);
-		}
-		console.log('-------------------------');
-	}catch(error){
-		console.log('could not process tweet ' + tweet.id_str + ', moving to next');
-	}
-}
-
-async function get_favorites_count(){
-	return new Promise((resolve, reject) =>{
-		client.get("users/show", {
-			screen_name: config.twitter.targetAccount
-		}).then(result => {
-			resolve(result.favourites_count);
-		}).catch(err => {
-			reject(err);
-		});
-	});
-}
-
+// Get a bunch of likes
 async function get_favorites(last_id) {
 	const parameters = {
 		screen_name: config.twitter.targetAccount,
@@ -132,44 +109,6 @@ async function get_favorites(last_id) {
 	}catch(error){
 		return error;
 	}
-}
-
-async function get_tweet(tweet_id) {
-	const parameters = {
-		id: tweet_id,
-		include_entities: true,
-		include_ext_alt_text: true,
-		tweet_mode: "extended",
-	};
-
-	try {
-		const tweet = await client.get("statuses/show", parameters);
-
-		return tweet;
-	} catch (error) {
-		console.log(error.errors);
-		destroy_favorite(tweet_id,1);
-		return;
-	}
-	
-}
-
-async function destroy_favorite(id, processing_count) {
-	console.log((processing_count + ': deleteing ' + id).red);
-	const parameters = {
-		id: id,
-		include_entities: false,
-	};
-
-	try{
-		await client.post("favorites/destroy", parameters)
-		console.log((unlike_count + ": Successfully unliked " + id).cyan);
-	}catch(error){
-		console.error("failed destroying the like".bgRed.white);
-		console.log(error.errors);
-	}
-
-	unlike_count += 1;
 }
 
 async function process_tweet(element, processing_count) {
@@ -299,6 +238,25 @@ async function download_photo(entity, element) {
 			}
 		});
 	});
+}
+
+// unlike
+async function destroy_favorite(id, processing_count) {
+	console.log((processing_count + ': deleteing ' + id).red);
+	const parameters = {
+		id: id,
+		include_entities: false,
+	};
+
+	try{
+		await client.post("favorites/destroy", parameters)
+		console.log((unlike_count + ": Successfully unliked " + id).cyan);
+	}catch(error){
+		console.error("failed destroying the like".bgRed.white);
+		console.log(error.errors);
+	}
+
+	unlike_count += 1;
 }
 
 module.exports.lets_twitter = lets_twitter;
